@@ -6,10 +6,10 @@ export default function Home() {
   const [lang, setLang] = useState(i18n.language);
 
   const toggleLanguage = () => {
-    const newLang = lang === 'en' ? 'es' : 'en';
-    i18n.changeLanguage(newLang);
-    setLang(newLang);
-  };
+  const newLang = lang === 'en' ? 'es' : 'en';
+  i18n.changeLanguage(newLang);
+  setLang(newLang);
+};
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
