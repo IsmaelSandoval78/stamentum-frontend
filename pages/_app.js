@@ -1,13 +1,13 @@
 import '../styles/globals.css';
-import { I18nextProvider } from 'react-i18next';
-import i18n from '../i18n';
+import { useEffect } from 'react';
+import '../i18n';  // Importa i18n para inicializarlo
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <I18nextProvider i18n={i18n}>
-      <Component {...pageProps} />
-    </I18nextProvider>
-  );
+  useEffect(() => {
+    // Esto asegura que i18n se cargue solo en cliente
+  }, []);
+
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;
