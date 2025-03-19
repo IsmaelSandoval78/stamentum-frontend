@@ -4,7 +4,7 @@ export default function ADHD() {
   const { t } = useTranslation();
 
   return (
-    <div style={ textAlign: 'center', marginTop: '50px' }>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>{t('adhd')}</h1>
       <p>{t('adhdDesc')}</p>
       <h3>{t('comingSoon')}</h3>
