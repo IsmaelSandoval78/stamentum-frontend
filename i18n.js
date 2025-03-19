@@ -8,9 +8,11 @@ i18n
   .init({
     supportedLngs: ['en', 'es'],
     fallbackLng: 'en',
-    debug: false,
     backend: {
       loadPath: '/locales/{{lng}}/common.json',
+    },
+    interpolation: {
+      escapeValue: false,
     },
     react: {
       useSuspense: false,
