@@ -2,5 +2,17 @@
   "welcome": "Welcome to Stamentum!",
   "dailyBoost": "Your Daily Boost",
   "explore": "Explore",
-  "changeLanguage": "Change language to Spanish"
+  "changeLanguage": "Change language to Spanish",
+  "exploreCategories": "Explore Categories",
+  "motivation": "Motivation",
+  "faith": "Faith",
+  "psychology": "Psychology",
+  "autism": "Autism",
+  "adhd": "ADHD",
+  "motivationDesc": "Find inspiration and discipline tips.",
+  "faithDesc": "Strengthen your faith with devotionals.",
+  "psychologyDesc": "Practical advice for mental clarity.",
+  "autismDesc": "Content focused on neurodiversity.",
+  "adhdDesc": "Resources for focus and organization.",
+  "comingSoon": "Coming soon!"
 }
