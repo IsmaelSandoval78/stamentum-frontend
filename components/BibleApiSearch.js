@@ -12,7 +12,11 @@ const BibleApiSearch = () => {
   useEffect(() => {
     fetch('https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json')
       .then((res) => res.json())
-      .then((data) => setVersions(data));
+      .then((data) => {
+        console.log('Versions fetched:', data);
+        setVersions(data);
+      })
+      .catch((error) => console.error('Error fetching versions:', error));
   }, []);
 
   const loadBooks = (version) => {
@@ -63,8 +67,8 @@ const BibleApiSearch = () => {
         <select value={selectedVersion} onChange={handleVersionChange}>
           <option value="">Selecciona versión</option>
           {versions.map((v, i) => (
-            <option key={i} value={v.version}>
-              {v.name}
+            <option key={i} value={v.id}>
+              {v.version}
             </option>
           ))}
         </select>
