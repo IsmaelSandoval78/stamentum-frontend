@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import BibleApiSearch from '../components/BibleApiSearch';
 
 export default function Explore() {
   const { t } = useTranslation();
@@ -38,6 +39,11 @@ export default function Explore() {
             </a>
           </Link>
         ))}
+      </div>
+
+      <div style={{ marginTop: '60px' }}>
+        <h2>{t('exploreBibleSearch') || 'Busca un versículo o capítulo'}</h2>
+        <BibleApiSearch />
       </div>
     </div>
   );
