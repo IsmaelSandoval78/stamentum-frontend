@@ -10,7 +10,6 @@ const BibleApiSearch = () => {
   const [result, setResult] = useState('');
 
   useEffect(() => {
-    // Fetch available versions from API
     fetch('https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json')
       .then((res) => res.json())
       .then((data) => setVersions(data));
@@ -45,7 +44,9 @@ const BibleApiSearch = () => {
       if (verse) {
         setResult(data.text || 'Versículo no encontrado');
       } else {
-        const chapterVerses = Object.values(data).map((v, i) => `${i + 1}: ${v.text}`).join('\n');
+        const chapterVerses = Object.values(data)
+          .map((v, i) => `${i + 1}: ${v.text}`)
+          .join('\n');
         setResult(chapterVerses || 'Capítulo no encontrado');
       }
     } else {
@@ -55,7 +56,7 @@ const BibleApiSearch = () => {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
-      <h2>Buscar Versículo o Capítulo (Fuente: API Pública)</h2>
+      <h3 style={{ marginBottom: '1rem' }}>Buscar en la Biblia (API pública)</h3>
 
       <div style={{ marginBottom: '1rem' }}>
         <label>Versión: </label>
@@ -63,6 +64,8 @@ const BibleApiSearch = () => {
           <option value="">Selecciona versión</option>
           {versions.map((v, i) => (
             <option key={i} value={v.version}>
+              {v.name}
+            </option>
           ))}
         </select>
       </div>
@@ -72,7 +75,9 @@ const BibleApiSearch = () => {
         <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)}>
           <option value="">Selecciona libro</option>
           {books.map((b, i) => (
-            <option key={i} value={b.slug}>{b.name}</option>
+            <option key={i} value={b.slug}>
+              {b.name}
+            </option>
           ))}
         </select>
       </div>
@@ -100,7 +105,16 @@ const BibleApiSearch = () => {
       <button onClick={handleSearch}>Buscar</button>
 
       {result && (
-        <div style={{ marginTop: '2rem', whiteSpace: 'pre-line', backgroundColor: '#f9f9f9', padding: '1rem', borderRadius: '5px' }}>
+        <div
+          style={{
+            marginTop: '2rem',
+            whiteSpace: 'pre-line',
+            backgroundColor: '#f9f9f9',
+            padding: '1rem',
+            borderRadius: '5px',
+            textAlign: 'left',
+          }}
+        >
           <strong>Resultado:</strong>
           <p>{result}</p>
         </div>
