@@ -62,7 +62,7 @@ const BibleApiSearch = () => {
         <select value={selectedVersion} onChange={handleVersionChange}>
           <option value="">Selecciona versión</option>
           {versions.map((v, i) => (
-            <option key={i} value={v.id}>{v.name}</option>
+            <option key={i} value={v.version}>
           ))}
         </select>
       </div>
