@@ -1,73 +1,58 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const BibleApiSearch = () => {
+export default function BibleApiSearch() {
   const [versions, setVersions] = useState([]);
-  const [selectedVersion, setSelectedVersion] = useState('');
   const [books, setBooks] = useState([]);
+  const [selectedVersion, setSelectedVersion] = useState('');
   const [selectedBook, setSelectedBook] = useState('');
   const [chapter, setChapter] = useState('');
   const [verse, setVerse] = useState('');
-  const [result, setResult] = useState('');
+  const [verseText, setVerseText] = useState('');
 
   useEffect(() => {
+    // Solo las versiones libres
+    const allowedVersions = ['en-kjv', 'en-asv', 'en-web', 'es-rv09'];
     fetch('https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json')
       .then((res) => res.json())
-      .then((data) => {
-        // Filtrar solo las versiones libres en inglés y español
-        const allowedVersions = ['en-kjv', 'en-asv', 'en-web', 'es-rv09'];
-        const filtered = data.filter((v) => allowedVersions.includes(v.id));
-        setVersions(filtered);
-      })
-      .catch((error) => console.error('Error fetching versions:', error));
+      .then((data) =>
+        setVersions(data.filter((v) => allowedVersions.includes(v.id)))
+      );
   }, []);
 
-  const loadBooks = (version) => {
-    fetch(`https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/${version}/books/books.json`)
-      .then((res) => res.json())
-      .then((data) => setBooks(data));
-  };
+  useEffect(() => {
+    if (selectedVersion) {
+      const isSpanish = selectedVersion === 'es-rv09';
+      const booksUrl = isSpanish
+        ? 'https://stamentum-bibles.s3.amazonaws.com/books/books_es.json'
+        : 'https://stamentum-bibles.s3.amazonaws.com/books/books_en.json';
 
-  const handleVersionChange = (e) => {
-    const version = e.target.value;
-    setSelectedVersion(version);
-    loadBooks(version);
-    setSelectedBook('');
-    setResult('');
-  };
+      fetch(booksUrl)
+        .then((res) => res.json())
+        .then((data) => setBooks(data));
+    }
+  }, [selectedVersion]);
 
-  const handleSearch = async () => {
-    if (selectedVersion && selectedBook && chapter) {
-      let url = '';
-      if (verse) {
-        url = `https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/${selectedVersion}/books/${selectedBook}/chapters/${chapter}/verses/${verse}.json`;
-      } else {
-        url = `https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/${selectedVersion}/books/${selectedBook}/chapters/${chapter}.json`;
-      }
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (verse) {
-        setResult(data.text || 'Versículo no encontrado');
-      } else {
-        const chapterVerses = Object.values(data)
-          .map((v, i) => `${i + 1}: ${v.text}`)
-          .join('\n');
-        setResult(chapterVerses || 'Capítulo no encontrado');
-      }
-    } else {
-      alert('Por favor, selecciona versión, libro y capítulo.');
+  const handleSearch = () => {
+    if (selectedVersion && selectedBook && chapter && verse) {
+      fetch(
+        `https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/${selectedVersion}/books/${selectedBook}/chapters/${chapter}/verses/${verse}.json`
+      )
+        .then((res) => res.json())
+        .then((data) => setVerseText(data.text))
+        .catch(() => setVerseText('Verse not found.'));
     }
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
-      <h3 style={{ marginBottom: '1rem' }}>Buscar en la Biblia (API pública)</h3>
-
+    <div style={{ marginTop: '40px', textAlign: 'center' }}>
+      <h1>Search a Bible Verse</h1>
       <div style={{ marginBottom: '1rem' }}>
-        <label>Versión: </label>
-        <select value={selectedVersion} onChange={handleVersionChange}>
-          <option value="">Selecciona versión</option>
+        <label>Version: </label>
+        <select
+          value={selectedVersion}
+          onChange={(e) => setSelectedVersion(e.target.value)}
+        >
+          <option value="">Select version</option>
           {versions.map((v, i) => (
             <option key={i} value={v.id}>
               {v.version}
@@ -76,57 +61,51 @@ const BibleApiSearch = () => {
         </select>
       </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Libro: </label>
-        <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)}>
-          <option value="">Selecciona libro</option>
-          {books.map((b, i) => (
-            <option key={i} value={b.slug}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {selectedVersion && (
+        <>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Book: </label>
+            <select
+              value={selectedBook}
+              onChange={(e) => setSelectedBook(e.target.value)}
+            >
+              <option value="">Select book</option>
+              {books.map((b, i) => (
+                <option key={i} value={b.slug}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Capítulo: </label>
-        <input
-          type="number"
-          value={chapter}
-          onChange={(e) => setChapter(e.target.value)}
-          placeholder="Ejemplo: 3"
-        />
-      </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Chapter: </label>
+            <input
+              type="number"
+              value={chapter}
+              onChange={(e) => setChapter(e.target.value)}
+            />
+          </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Versículo (opcional): </label>
-        <input
-          type="number"
-          value={verse}
-          onChange={(e) => setVerse(e.target.value)}
-          placeholder="Ejemplo: 16"
-        />
-      </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Verse: </label>
+            <input
+              type="number"
+              value={verse}
+              onChange={(e) => setVerse(e.target.value)}
+            />
+          </div>
 
-      <button onClick={handleSearch}>Buscar</button>
+          <button onClick={handleSearch}>Search</button>
+        </>
+      )}
 
-      {result && (
-        <div
-          style={{
-            marginTop: '2rem',
-            whiteSpace: 'pre-line',
-            backgroundColor: '#f9f9f9',
-            padding: '1rem',
-            borderRadius: '5px',
-            textAlign: 'left',
-          }}
-        >
-          <strong>Resultado:</strong>
-          <p>{result}</p>
+      {verseText && (
+        <div style={{ marginTop: '2rem', borderTop: '1px solid #ccc', paddingTop: '1rem' }}>
+          <h3>Result:</h3>
+          <p>{verseText}</p>
         </div>
       )}
     </div>
   );
-};
-
-export default BibleApiSearch;
+}
