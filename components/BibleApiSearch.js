@@ -13,8 +13,10 @@ const BibleApiSearch = () => {
     fetch('https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json')
       .then((res) => res.json())
       .then((data) => {
-        console.log('Versions fetched:', data);
-        setVersions(data);
+        // Filtrar solo las versiones libres en inglés y español
+        const allowedVersions = ['en-kjv', 'en-asv', 'en-web', 'es-rv09'];
+        const filtered = data.filter((v) => allowedVersions.includes(v.id));
+        setVersions(filtered);
       })
       .catch((error) => console.error('Error fetching versions:', error));
   }, []);
