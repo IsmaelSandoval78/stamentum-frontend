@@ -10,13 +10,16 @@ export default function BibleApiSearch() {
   const [verseText, setVerseText] = useState('');
 
   useEffect(() => {
-    // Solo las versiones libres
     const allowedVersions = ['en-kjv', 'en-asv', 'en-web', 'es-rv09'];
     fetch('https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json')
       .then((res) => res.json())
-      .then((data) =>
-        setVersions(data.filter((v) => allowedVersions.includes(v.id)))
-      );
+      .then((data) => {
+        const filteredVersions = data.filter((v) =>
+          allowedVersions.includes(v.id)
+        );
+        console.log('Versions loaded:', filteredVersions);
+        setVersions(filteredVersions);
+      });
   }, []);
 
   useEffect(() => {
@@ -26,9 +29,15 @@ export default function BibleApiSearch() {
         ? 'https://stamentum-bibles.s3.amazonaws.com/books/books_es.json'
         : 'https://stamentum-bibles.s3.amazonaws.com/books/books_en.json';
 
+      console.log(`Fetching books from ${booksUrl} for version ${selectedVersion}`);
+
       fetch(booksUrl)
         .then((res) => res.json())
-        .then((data) => setBooks(data));
+        .then((data) => {
+          console.log('Books loaded:', data);
+          setBooks(data);
+        })
+        .catch((err) => console.error('Error loading books:', err));
     }
   }, [selectedVersion]);
 
